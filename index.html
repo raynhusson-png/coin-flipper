@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title> coinfilpper </title>
+  <title>Crypto Investment Platform</title>
 
   <style>
     body {
@@ -52,6 +52,7 @@
       border-radius: 8px;
       text-decoration: none;
       font-weight: bold;
+      border: none;
     }
 
     input {
@@ -74,7 +75,7 @@
 <body>
 
 <header>
-  coinflipper Dashboard 💰
+  Crypto Investment Dashboard 💰
 </header>
 
 <div class="container">
@@ -98,54 +99,92 @@
   <!-- DEPOSIT -->
   <div class="card">
     <h2>Deposit Wallet 💼</h2>
-    <div class="wallet">YOUR_BTC_WALLET_ADDRESS_HERE</div>
-    <button class="btn">Copy Wallet</button>
+    <div class="wallet" id="wallet">PASTE_YOUR_BTC_WALLET_ADDRESS_HERE</div>
+    <button class="btn" onclick="copyWallet()">Copy Wallet</button>
   </div>
 
   <!-- INVESTMENT PLANS -->
   <div class="card">
     <h2>Investment Plans 💹</h2>
-
-    <p>Starter: $100 - 5% weekly</p>
-    <p>Pro: $500 - 10% weekly</p>
-    <p>VIP: $1000 - 20% weekly</p>
+    <p>Starter: $100 → 5% weekly</p>
+    <p>Pro: $500 → 10% weekly</p>
+    <p>VIP: $1000 → 20% weekly</p>
   </div>
 
   <!-- SIGNUP -->
   <div class="card">
     <h2>Sign Up 👤</h2>
-    <input type="text" placeholder="Full Name">
-    <input type="email" placeholder="Gmail">
-    <input type="password" placeholder="Password">
-    <button class="btn">Create Account</button>
+    <input id="name" type="text" placeholder="Full Name">
+    <input id="email" type="email" placeholder="Gmail">
+    <input id="password" type="password" placeholder="Password">
+    <button class="btn" onclick="createAccount()">Create Account</button>
   </div>
 
   <!-- WITHDRAW -->
   <div class="card">
     <h2>Withdrawal 💸</h2>
-    <input type="text" placeholder="Wallet Address">
-    <input type="number" placeholder="Amount">
-    <button class="btn">Request Withdrawal</button>
+    <input id="withdrawWallet" type="text" placeholder="Wallet Address">
+    <input id="amount" type="number" placeholder="Amount">
+    <button class="btn" onclick="requestWithdrawal()">Request Withdrawal</button>
+  </div>
+
+  <!-- CONTACT -->
+  <div class="card">
+    <h2>Contact 📧</h2>
+    <p>Email: raynhusson@gmail.com</p>
   </div>
 
   <!-- NEWS -->
   <div class="card">
     <h2>Crypto News 📰</h2>
-    <p>Bitcoin is rising in global markets...</p>
-    <p>Ethereum upgrade improves speed...</p>
-    <p>Solana adoption increasing...</p>
+    <p>Bitcoin market continues to fluctuate globally.</p>
+    <p>Ethereum upgrades improving performance.</p>
+    <p>Solana gaining popularity among developers.</p>
   </div>
 
 </div>
 
 <script>
 async function getPrices() {
-  const res = await fetch("https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,solana&vs_currencies=usd");
-  const data = await res.json();
+  try {
+    const res = await fetch("https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,solana&vs_currencies=usd");
+    const data = await res.json();
 
-  document.getElementById("btc").innerText = data.bitcoin.usd;
-  document.getElementById("eth").innerText = data.ethereum.usd;
-  document.getElementById("sol").innerText = data.solana.usd;
+    document.getElementById("btc").innerText = data.bitcoin.usd;
+    document.getElementById("eth").innerText = data.ethereum.usd;
+    document.getElementById("sol").innerText = data.solana.usd;
+  } catch (err) {
+    console.log("Error:", err);
+  }
+}
+
+function copyWallet() {
+  const wallet = document.getElementById("wallet").innerText;
+  navigator.clipboard.writeText(wallet);
+  alert("Wallet copied!");
+}
+
+function createAccount() {
+  const name = document.getElementById("name").value;
+  const email = document.getElementById("email").value;
+
+  if (!name || !email) {
+    alert("Please fill all fields");
+    return;
+  }
+
+  alert("Account created successfully (Demo)");
+}
+
+function requestWithdrawal() {
+  const amount = document.getElementById("amount").value;
+
+  if (!amount) {
+    alert("Enter amount");
+    return;
+  }
+
+  alert("Withdrawal request sent (Demo)");
 }
 
 getPrices();
