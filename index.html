@@ -16,14 +16,14 @@ header{background:#111827;padding:15px;text-align:center;font-weight:bold}
 input{width:100%;padding:10px;margin-top:8px;border:none;border-radius:6px}
 button{padding:10px;margin-top:10px;background:#fbbf24;border:none;border-radius:6px;cursor:pointer}
 .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:15px}
-.price{font-size:20px;color:#22c55e}
+.price{color:#22c55e;font-size:20px}
 img{width:100%;border-radius:8px}
 </style>
 </head>
 
 <body>
 
-<header>Investment Platform Dashboard 📊</header>
+<header>Investment Dashboard 📊</header>
 
 <div class="container">
 
@@ -32,7 +32,7 @@ img{width:100%;border-radius:8px}
 <h2>Login / Signup</h2>
 <input id="email" placeholder="Email">
 <input id="password" type="password" placeholder="Password">
-<button onclick="login()">Enter</button>
+<button onclick="login()">Enter Dashboard</button>
 </div>
 
 <!-- APP -->
@@ -56,7 +56,7 @@ img{width:100%;border-radius:8px}
 </div>
 
 <div class="card">
-<h3>Deposit (Demo)</h3>
+<h3>Deposit</h3>
 <input id="dep" placeholder="Amount">
 <button onclick="deposit()">Add Funds</button>
 </div>
@@ -64,12 +64,6 @@ img{width:100%;border-radius:8px}
 <div class="card">
 <h3>Withdraw</h3>
 <button onclick="withdraw()">Request Withdrawal</button>
-</div>
-
-<div class="card">
-<h3>Investment Plans</h3>
-<p>Starter / Pro / VIP (demo)</p>
-<button onclick="alert('Plan selected')">Choose Plan</button>
 </div>
 
 </div>
@@ -93,7 +87,7 @@ width="100%" height="300"></iframe>
 
 <script>
 
-// FIREBASE CONFIG
+// FIREBASE CONFIG (ADD YOURS)
 const firebaseConfig = {
   apiKey: "YOUR_KEY",
   authDomain: "YOUR_DOMAIN",
@@ -106,7 +100,7 @@ const db = firebase.firestore();
 
 let uid = null;
 
-// LOGIN
+/* LOGIN */
 function login(){
   auth.signInWithEmailAndPassword(email.value,password.value)
   .catch(()=>{
@@ -120,10 +114,11 @@ function login(){
   });
 }
 
-// AUTH STATE
+/* AUTH STATE */
 auth.onAuthStateChanged(user=>{
   if(user){
     uid = user.uid;
+
     authBox.style.display="none";
     app.style.display="block";
 
@@ -138,25 +133,24 @@ auth.onAuthStateChanged(user=>{
   }
 });
 
-// 💰 SIMULATED PROFIT ENGINE
+/* PROFIT ENGINE (DEMO ONLY) */
 function startProfit(uid){
-  setInterval(()=>{
+  setInterval(async ()=>{
     const ref = db.collection("users").doc(uid);
+    const doc = await ref.get();
 
-    ref.get().then(doc=>{
-      let d = doc.data();
-      let gain = d.balance * 0.002;
+    let d = doc.data();
+    let gain = d.balance * 0.0015;
 
-      ref.update({
-        balance: d.balance + gain,
-        profit: d.profit + gain
-      });
+    ref.update({
+      balance: d.balance + gain,
+      profit: d.profit + gain
     });
 
   },5000);
 }
 
-// 💳 DEPOSIT (DEMO)
+/* DEPOSIT */
 function deposit(){
   const amount = parseFloat(dep.value);
   const ref = db.collection("users").doc(uid);
@@ -168,7 +162,7 @@ function deposit(){
   });
 }
 
-// 📤 WITHDRAW REQUEST
+/* WITHDRAW */
 function withdraw(){
   db.collection("withdrawals").add({
     uid:uid,
@@ -178,13 +172,13 @@ function withdraw(){
   alert("Request sent");
 }
 
-// 🚪 LOGOUT
+/* LOGOUT */
 function logout(){
   auth.signOut();
   location.reload();
 }
 
-// 📈 PRICE
+/* PRICE */
 async function price(){
   const r = await fetch("https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd");
   const d = await r.json();
@@ -192,12 +186,13 @@ async function price(){
 }
 price();
 
-// 📰 NEWS
+/* NEWS */
 async function news(){
   const r = await fetch("https://min-api.cryptocompare.com/data/v2/news/?lang=EN");
   const d = await r.json();
 
   let html = "";
+
   d.Data.slice(0,5).forEach(n=>{
     html += `
       <div style="background:#1f2937;margin:10px 0;padding:10px;border-radius:8px">
