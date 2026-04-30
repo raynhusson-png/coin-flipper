@@ -6,13 +6,13 @@
 
   <style>
     body { margin:0; font-family:Arial; background:#0b1220; color:white; }
-    header { background:#111827; padding:15px; text-align:center; font-size:20px; font-weight:bold; }
+    header { background:#111827; padding:15px; text-align:center; font-size:20px; }
     .container { max-width:900px; margin:auto; padding:20px; }
     .card { background:#111827; padding:15px; margin:15px 0; border-radius:10px; }
     h2 { color:#fbbf24; }
-    .btn { display:inline-block; margin-top:10px; padding:10px 15px; background:#fbbf24; color:black; border-radius:8px; border:none; }
-    input { width:100%; padding:10px; margin-top:5px; border-radius:6px; border:none; }
-    .wallet { background:#1f2937; padding:10px; border-radius:8px; word-break:break-all; }
+    .btn { margin-top:10px; padding:10px; background:#fbbf24; border:none; border-radius:6px; }
+    input { width:100%; padding:10px; margin-top:5px; border:none; border-radius:6px; }
+    iframe { width:100%; height:300px; border:none; }
   </style>
 </head>
 
@@ -24,7 +24,7 @@
 
   <!-- LIVE PRICES -->
   <div class="card">
-    <h2>Live Prices 📊</h2>
+    <h2>Live Prices</h2>
     BTC: $<span id="btc">...</span><br>
     ETH: $<span id="eth">...</span><br>
     SOL: $<span id="sol">...</span>
@@ -32,69 +32,73 @@
 
   <!-- LIVE CHART -->
   <div class="card">
-    <h2>Bitcoin Chart 📈</h2>
-    <iframe 
-      src="https://www.tradingview.com/widgetembed/?symbol=BINANCE:BTCUSDT&theme=dark"
-      width="100%" height="350">
-    </iframe>
+    <h2>Bitcoin Chart</h2>
+    <iframe src="https://www.tradingview.com/widgetembed/?symbol=BINANCE:BTCUSDT&theme=dark"></iframe>
+  </div>
+
+  <!-- LOGIN -->
+  <div class="card" id="loginBox">
+    <h2>Login / Signup</h2>
+    <input id="email" placeholder="Email">
+    <button class="btn" onclick="login()">Enter</button>
   </div>
 
   <!-- DASHBOARD -->
   <div class="card" id="dashboard" style="display:none;">
-    <h2>Your Dashboard 💼</h2>
+    <h2>Your Dashboard</h2>
     Balance: $<span id="balance">0</span><br>
     Profit: $<span id="profit">0</span><br>
     <button class="btn" onclick="logout()">Logout</button>
   </div>
 
-  <!-- AUTH -->
-  <div class="card" id="auth">
-    <h2>Sign Up / Login 👤</h2>
-    <input id="email" type="email" placeholder="Email">
-    <input id="password" type="password" placeholder="Password">
-    <button class="btn" onclick="login()">Enter Dashboard</button>
-  </div>
-
   <!-- DEPOSIT -->
   <div class="card">
-    <h2>Deposit 💼</h2>
-    <div class="wallet" id="wallet">PASTE_YOUR_WALLET_ADDRESS</div>
-    <button class="btn" onclick="copyWallet()">Copy Wallet</button>
+    <h2>Deposit</h2>
+    <p id="wallet">PASTE_YOUR_WALLET_ADDRESS</p>
+    <button class="btn" onclick="copyWallet()">Copy</button>
   </div>
 
   <!-- WITHDRAW -->
   <div class="card">
-    <h2>Withdraw 💸</h2>
-    <input id="amount" type="number" placeholder="Amount">
+    <h2>Withdraw</h2>
+    <input id="amount" placeholder="Amount">
     <button class="btn" onclick="withdraw()">Withdraw</button>
+  </div>
+
+  <!-- INVESTMENT -->
+  <div class="card">
+    <h2>Investment Plans</h2>
+    <p>$100 → 5%</p>
+    <p>$500 → 10%</p>
+    <p>$1000 → 20%</p>
   </div>
 
   <!-- NEWS -->
   <div class="card">
-    <h2>Crypto News 📰</h2>
-    <p>Bitcoin market continues to fluctuate globally.</p>
-    <p>Ethereum upgrades improving performance.</p>
-    <p>Solana gaining popularity among developers.</p>
+    <h2>Crypto News</h2>
+    <p>Bitcoin volatility continues globally.</p>
+    <p>Ethereum upgrades ongoing.</p>
+    <p>Solana adoption increasing.</p>
   </div>
 
 </div>
 
 <script>
-// LIVE PRICE
-async function getPrices() {
-  try {
+// LIVE PRICES
+async function loadPrices(){
+  try{
     const res = await fetch("https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,solana&vs_currencies=usd");
     const data = await res.json();
-    btc.innerText = data.bitcoin.usd;
-    eth.innerText = data.ethereum.usd;
-    sol.innerText = data.solana.usd;
-  } catch {}
+    document.getElementById("btc").innerText = data.bitcoin.usd;
+    document.getElementById("eth").innerText = data.ethereum.usd;
+    document.getElementById("sol").innerText = data.solana.usd;
+  }catch(e){}
 }
-getPrices();
-setInterval(getPrices,10000);
+loadPrices();
+setInterval(loadPrices,10000);
 
 // LOGIN SYSTEM
-function login() {
+function login(){
   const email = document.getElementById("email").value;
   if(!email){ alert("Enter email"); return; }
 
@@ -102,8 +106,8 @@ function login() {
 
   if(!localStorage.getItem(email)){
     localStorage.setItem(email, JSON.stringify({
-      balance: 100,
-      profit: 0
+      balance:100,
+      profit:0
     }));
   }
 
@@ -115,27 +119,27 @@ function loadDashboard(){
   const user = localStorage.getItem("user");
   if(!user) return;
 
-  document.getElementById("auth").style.display="none";
+  document.getElementById("loginBox").style.display="none";
   document.getElementById("dashboard").style.display="block";
 
   const data = JSON.parse(localStorage.getItem(user));
 
-  balance.innerText = data.balance;
-  profit.innerText = data.profit;
+  document.getElementById("balance").innerText = data.balance;
+  document.getElementById("profit").innerText = data.profit;
 
   startProfit();
 }
 
-// AUTO PROFIT
+// PROFIT SYSTEM
 function startProfit(){
   setInterval(()=>{
     const user = localStorage.getItem("user");
     let data = JSON.parse(localStorage.getItem(user));
 
-    data.profit += (data.balance * 0.01);
+    data.profit += data.balance * 0.01;
     localStorage.setItem(user, JSON.stringify(data));
 
-    profit.innerText = data.profit.toFixed(2);
+    document.getElementById("profit").innerText = data.profit.toFixed(2);
   },5000);
 }
 
@@ -146,7 +150,7 @@ function withdraw(){
   const amount = parseFloat(document.getElementById("amount").value);
 
   if(amount > data.balance){
-    alert("Insufficient balance");
+    alert("Not enough balance");
     return;
   }
 
@@ -157,17 +161,17 @@ function withdraw(){
   loadDashboard();
 }
 
-// LOGOUT
-function logout(){
-  localStorage.removeItem("user");
-  location.reload();
-}
-
 // COPY WALLET
 function copyWallet(){
   const wallet = document.getElementById("wallet").innerText;
   navigator.clipboard.writeText(wallet);
   alert("Copied!");
+}
+
+// LOGOUT
+function logout(){
+  localStorage.removeItem("user");
+  location.reload();
 }
 
 // AUTO LOAD
