@@ -10,7 +10,7 @@
     .container { max-width:900px; margin:auto; padding:20px; }
     .card { background:#111827; padding:15px; margin:15px 0; border-radius:10px; }
     h2 { color:#fbbf24; }
-    .btn { display:inline-block; margin-top:10px; padding:10px 15px; background:#fbbf24; color:black; border-radius:8px; text-decoration:none; border:none; }
+    .btn { display:inline-block; margin-top:10px; padding:10px 15px; background:#fbbf24; color:black; border-radius:8px; border:none; }
     input { width:100%; padding:10px; margin-top:5px; border-radius:6px; border:none; }
     .wallet { background:#1f2937; padding:10px; border-radius:8px; word-break:break-all; }
   </style>
@@ -30,6 +30,15 @@
     SOL: $<span id="sol">...</span>
   </div>
 
+  <!-- LIVE CHART -->
+  <div class="card">
+    <h2>Bitcoin Chart 📈</h2>
+    <iframe 
+      src="https://www.tradingview.com/widgetembed/?symbol=BINANCE:BTCUSDT&theme=dark"
+      width="100%" height="350">
+    </iframe>
+  </div>
+
   <!-- DASHBOARD -->
   <div class="card" id="dashboard" style="display:none;">
     <h2>Your Dashboard 💼</h2>
@@ -38,7 +47,7 @@
     <button class="btn" onclick="logout()">Logout</button>
   </div>
 
-  <!-- SIGNUP / LOGIN -->
+  <!-- AUTH -->
   <div class="card" id="auth">
     <h2>Sign Up / Login 👤</h2>
     <input id="email" type="email" placeholder="Email">
@@ -60,6 +69,14 @@
     <button class="btn" onclick="withdraw()">Withdraw</button>
   </div>
 
+  <!-- NEWS -->
+  <div class="card">
+    <h2>Crypto News 📰</h2>
+    <p>Bitcoin market continues to fluctuate globally.</p>
+    <p>Ethereum upgrades improving performance.</p>
+    <p>Solana gaining popularity among developers.</p>
+  </div>
+
 </div>
 
 <script>
@@ -76,21 +93,16 @@ async function getPrices() {
 getPrices();
 setInterval(getPrices,10000);
 
-// LOGIN SYSTEM (LOCAL)
+// LOGIN SYSTEM
 function login() {
   const email = document.getElementById("email").value;
-
-  if(!email){
-    alert("Enter email");
-    return;
-  }
+  if(!email){ alert("Enter email"); return; }
 
   localStorage.setItem("user", email);
 
-  // create account if new
   if(!localStorage.getItem(email)){
     localStorage.setItem(email, JSON.stringify({
-      balance: 100, // starting balance
+      balance: 100,
       profit: 0
     }));
   }
@@ -108,23 +120,23 @@ function loadDashboard(){
 
   const data = JSON.parse(localStorage.getItem(user));
 
-  document.getElementById("balance").innerText = data.balance;
-  document.getElementById("profit").innerText = data.profit;
+  balance.innerText = data.balance;
+  profit.innerText = data.profit;
 
   startProfit();
 }
 
-// AUTO PROFIT SYSTEM
+// AUTO PROFIT
 function startProfit(){
   setInterval(()=>{
     const user = localStorage.getItem("user");
     let data = JSON.parse(localStorage.getItem(user));
 
-    data.profit += (data.balance * 0.01); // 1% growth
+    data.profit += (data.balance * 0.01);
     localStorage.setItem(user, JSON.stringify(data));
 
-    document.getElementById("profit").innerText = data.profit.toFixed(2);
-  }, 5000);
+    profit.innerText = data.profit.toFixed(2);
+  },5000);
 }
 
 // WITHDRAW
