@@ -1,177 +1,156 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
   <meta charset="UTF-8">
-  <title>coin filpper</title>
+  <title>Crypto Investment Platform</title>
 
   <style>
     body {
       margin: 0;
-      font-family: Arial, sans-serif;
-      background: #f4f4f4;
-      text-align: center;
+      font-family: Arial;
+      background: #0b1220;
+      color: white;
     }
 
     header {
-      background: #333;
-      color: white;
-      padding: 30px;
-    }
-
-    h1 {
-      margin: 0;
+      background: #111827;
+      padding: 15px;
+      text-align: center;
+      font-size: 20px;
+      font-weight: bold;
     }
 
     .container {
+      max-width: 900px;
+      margin: auto;
       padding: 20px;
     }
 
-    img {
-      width: 150px;
-      border-radius: 50%;
-      margin-top: 20px;
+    .card {
+      background: #111827;
+      padding: 15px;
+      margin: 15px 0;
+      border-radius: 10px;
     }
 
-    p {
+    h2 {
+      color: #fbbf24;
+    }
+
+    .price {
+      color: #22c55e;
       font-size: 18px;
-      color: #444;
-      max-width: 500px;
-      margin: 20px auto;
+      font-weight: bold;
     }
 
     .btn {
       display: inline-block;
-      margin-top: 20px;
-      padding: 10px 20px;
-      background: #333;
-      color: white;
+      margin-top: 10px;
+      padding: 10px 15px;
+      background: #fbbf24;
+      color: black;
+      border-radius: 8px;
       text-decoration: none;
-      border-radius: 5px;
+      font-weight: bold;
     }
 
-    .btn:hover {
-      background: #555;
+    input {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border-radius: 6px;
+      border: none;
     }
-  </style><style>
-  body {
-    margin: 0;
-    font-family: Arial, sans-serif;
-    background: #f4f4f4;
-    text-align: center;
-  }
 
-  header {
-    background: #333;
-    color: white;
-    padding: 30px;
-  }
-
-  .container {
-    max-width: 600px;
-    margin: auto;
-    padding: 20px;
-  }
-
-  img {
-    width: 150px;
-    border-radius: 50%;
-    margin-top: 20px;
-  }
-
-  h2 {
-    margin-top: 30px;
-    color: #333;
-  }
-
-  ul {
-    list-style: none;
-    padding: 0;
-  }
-
-  ul li {
-    background: white;
-    margin: 8px auto;
-    padding: 10px;
-    border-radius: 5px;
-    max-width: 300px;
-  }
-
-  .btn {
-    display: inline-block;
-    margin-top: 20px;
-    padding: 10px 20px;
-    background: #333;
-    color: white;
-    text-decoration: none;
-    border-radius: 5px;
-  }
-
-  .btn:hover {
-    background: #555;
-  }
-</style>.btn {
-  display: inline-block;
-  margin-top: 20px;
-  padding: 12px 22px;
-  background: #222;
-  color: white;
-  text-decoration: none;
-  border-radius: 8px;
-  transition: 0.3s;
-}.container h2 {
-  margin-top: 35px;
-}
-
-.btn:hover {
-  background: #444;
-  transform: scale(1.05);
-}<body>
-
-  <header>
-    <h1>coin flipper</h1>
-  </header>
-
-  <div class="container">
-
-    <h2>Hi, I'm a Web Developer 👋</h2>
-
-    <p>
-      I am learning how to build websites using HTML and CSS. This is my first portfolio website.
-    </p>
-
-    <a class="btn" href="#projects">View My Work</a>
-
-    <h2>About Me</h2>
-    <p>
-      I am a beginner web developer learning HTML, CSS, and JavaScript. I enjoy building simple websites and improving my skills every day.
-    </p><img src="https://cdn.freecodecamp.org/curriculum/cat-photo-app/relaxing-cat.jpg" alt="profile picture">
-
-    <h2>Skills</h2>
-
-    <ul>
-      <li>HTML</li>
-      <li>CSS</li>
-      <li>JavaScript (learning)</li>
-    </ul>
-
-    <h2 id="projects">Projects</h2>
-
-    <ul>
-      <li>Cat Photo App (freeCodeCamp)</li>
-<li>More projects coming soon...</li>
-    </ul>
-
-  </div>
-
-</body><h2>Contact</h2>
-
-<p>You can reach me here:</p>
-
-<a class="btn" href="mailto:raynhusson@gmail.com">raynhusson@gmail.com </a>
-
+    .wallet {
+      background: #1f2937;
+      padding: 10px;
+      border-radius: 8px;
+      word-break: break-all;
+    }
+  </style>
 </head>
+
 <body>
 
-  
-    
-    
+<header>
+  Crypto Investment Dashboard 💰
+</header>
+
+<div class="container">
+
+  <!-- LIVE PRICES -->
+  <div class="card">
+    <h2>Live Prices 📊</h2>
+    Bitcoin: $<span id="btc">Loading...</span><br>
+    Ethereum: $<span id="eth">Loading...</span><br>
+    Solana: $<span id="sol">Loading...</span>
+  </div>
+
+  <!-- LIVE CHART -->
+  <div class="card">
+    <h2>Bitcoin Chart 📈</h2>
+    <iframe 
+      src="https://www.tradingview.com/widgetembed/?symbol=BINANCE:BTCUSDT&theme=dark"
+      width="100%" height="350"></iframe>
+  </div>
+
+  <!-- DEPOSIT -->
+  <div class="card">
+    <h2>Deposit Wallet 💼</h2>
+    <div class="wallet">YOUR_BTC_WALLET_ADDRESS_HERE</div>
+    <button class="btn">Copy Wallet</button>
+  </div>
+
+  <!-- INVESTMENT PLANS -->
+  <div class="card">
+    <h2>Investment Plans 💹</h2>
+
+    <p>Starter: $100 - 5% weekly</p>
+    <p>Pro: $500 - 10% weekly</p>
+    <p>VIP: $1000 - 20% weekly</p>
+  </div>
+
+  <!-- SIGNUP -->
+  <div class="card">
+    <h2>Sign Up 👤</h2>
+    <input type="text" placeholder="Full Name">
+    <input type="email" placeholder="Gmail">
+    <input type="password" placeholder="Password">
+    <button class="btn">Create Account</button>
+  </div>
+
+  <!-- WITHDRAW -->
+  <div class="card">
+    <h2>Withdrawal 💸</h2>
+    <input type="text" placeholder="Wallet Address">
+    <input type="number" placeholder="Amount">
+    <button class="btn">Request Withdrawal</button>
+  </div>
+
+  <!-- NEWS -->
+  <div class="card">
+    <h2>Crypto News 📰</h2>
+    <p>Bitcoin is rising in global markets...</p>
+    <p>Ethereum upgrade improves speed...</p>
+    <p>Solana adoption increasing...</p>
+  </div>
+
+</div>
+
+<script>
+async function getPrices() {
+  const res = await fetch("https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,solana&vs_currencies=usd");
+  const data = await res.json();
+
+  document.getElementById("btc").innerText = data.bitcoin.usd;
+  document.getElementById("eth").innerText = data.ethereum.usd;
+  document.getElementById("sol").innerText = data.solana.usd;
+}
+
+getPrices();
+setInterval(getPrices, 10000);
+</script>
+
+</body>
+</html>
