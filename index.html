@@ -2,22 +2,65 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Crypto Dashboard Pro</title>
-
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+<title>Crypto Dashboard</title>
 
 <style>
-body{margin:0;font-family:Arial;background:#0b1220;color:white}
-header{background:#111827;padding:15px;text-align:center;font-size:20px}
-.container{max-width:900px;margin:auto;padding:20px}
-.card{background:#111827;padding:15px;margin:15px 0;border-radius:10px}
-input{width:100%;padding:10px;margin-top:8px;border:none;border-radius:6px}
-button{padding:10px;margin-top:10px;background:#fbbf24;border:none;border-radius:6px;cursor:pointer}
-.news{background:#1f2937;margin:8px 0;padding:8px;border-radius:6px}
-.investor{width:100px;text-align:center;display:inline-block;margin:5px}
-.investor img{width:100%;border-radius:8px}
+body{
+  margin:0;
+  font-family:Arial;
+  background:#0b1220;
+  color:white;
+}
+
+header{
+  background:#111827;
+  padding:15px;
+  text-align:center;
+  font-size:20px;
+  font-weight:bold;
+}
+
+.container{
+  max-width:900px;
+  margin:auto;
+  padding:20px;
+}
+
+.card{
+  background:#111827;
+  padding:15px;
+  margin:15px 0;
+  border-radius:10px;
+}
+
+input{
+  width:100%;
+  padding:10px;
+  margin-top:8px;
+  border:none;
+  border-radius:6px;
+}
+
+button{
+  padding:10px;
+  margin-top:10px;
+  background:#fbbf24;
+  border:none;
+  border-radius:6px;
+  cursor:pointer;
+}
+
+.news{
+  background:#1f2937;
+  padding:10px;
+  margin:8px 0;
+  border-radius:8px;
+}
+
+img{
+  width:100%;
+  border-radius:10px;
+}
 </style>
 </head>
 
@@ -28,8 +71,8 @@ button{padding:10px;margin-top:10px;background:#fbbf24;border:none;border-radius
 <div class="container">
 
 <!-- LOGIN -->
-<div class="card" id="authBox">
-<h2>Login / Signup</h2>
+<div class="card" id="loginBox">
+<h2>Login</h2>
 <input id="email" placeholder="Email">
 <input id="password" type="password" placeholder="Password">
 <button onclick="login()">Enter</button>
@@ -37,14 +80,14 @@ button{padding:10px;margin-top:10px;background:#fbbf24;border:none;border-radius
 
 <!-- DASHBOARD -->
 <div class="card" id="dashboard" style="display:none;">
-<h2>Your Portfolio</h2>
-<p>Balance: $<span id="balance">0</span></p>
+<h2>Dashboard</h2>
+<p>Welcome user 👤</p>
 <button onclick="logout()">Logout</button>
 </div>
 
 <!-- PRICES -->
 <div class="card">
-<h2>Live Prices 📊</h2>
+<h2>Live Prices 📈</h2>
 BTC: $<span id="btc">...</span><br>
 ETH: $<span id="eth">...</span><br>
 SOL: $<span id="sol">...</span>
@@ -52,7 +95,7 @@ SOL: $<span id="sol">...</span>
 
 <!-- CHART -->
 <div class="card">
-<h2>Bitcoin Chart 📈</h2>
+<h2>Bitcoin Chart</h2>
 <iframe 
 src="https://www.tradingview.com/widgetembed/?symbol=BINANCE:BTCUSDT&theme=dark"
 width="100%" height="300"></iframe>
@@ -61,77 +104,65 @@ width="100%" height="300"></iframe>
 <!-- NEWS -->
 <div class="card">
 <h2>Crypto News 📰</h2>
-<div id="newsContainer">Loading news...</div>
+<div id="news">Loading news...</div>
+</div>
+
+<!-- INVESTORS -->
+<div class="card">
+<h2>Top Crypto Figures 💰</h2>
+
+<img src="https://upload.wikimedia.org/wikipedia/commons/5/59/Satoshi_Nakamoto.jpg">
+<p>Satoshi Nakamoto</p>
+
+<img src="https://upload.wikimedia.org/wikipedia/commons/6/6f/Vitalik_Buterin_Ethereum.jpg">
+<p>Vitalik Buterin</p>
+
+<img src="https://upload.wikimedia.org/wikipedia/commons/4/46/Michael_Saylor.jpg">
+<p>Michael Saylor</p>
+
 </div>
 
 </div>
 
 <script>
 
-// 🔥 FIREBASE CONFIG (PUT YOUR REAL VALUES HERE)
-const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_AUTH_DOMAIN",
-  projectId: "YOUR_PROJECT_ID"
-};
-
-firebase.initializeApp(firebaseConfig);
-const auth = firebase.auth();
-const db = firebase.firestore();
-
-// 🔐 LOGIN / SIGNUP
+// 🔐 SIMPLE LOGIN (LOCAL ONLY)
 function login(){
   const email = document.getElementById("email").value;
-  const password = document.getElementById("password").value;
+  const pass = document.getElementById("password").value;
 
-  if(!email || !password){
+  if(!email || !pass){
     alert("Fill all fields");
     return;
   }
 
-  auth.createUserWithEmailAndPassword(email, password)
-  .then(user=>{
-    db.collection("users").doc(user.user.uid).set({
-      balance: 100
-    });
-  })
-  .catch(()=>{
-    auth.signInWithEmailAndPassword(email, password);
-  });
+  localStorage.setItem("user", email);
+
+  document.getElementById("loginBox").style.display="none";
+  document.getElementById("dashboard").style.display="block";
 }
 
-// 📊 AUTH STATE
-auth.onAuthStateChanged(user=>{
-  if(user){
-    authBox.style.display="none";
-    dashboard.style.display="block";
-
-    db.collection("users").doc(user.uid)
-    .onSnapshot(doc=>{
-      balance.innerText = doc.data().balance;
-    });
-  }
-});
-
-// 🚪 LOGOUT
 function logout(){
-  auth.signOut();
+  localStorage.removeItem("user");
   location.reload();
 }
 
 // 📈 LIVE PRICES
 async function loadPrices(){
-  const res = await fetch("https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,solana&vs_currencies=usd");
-  const data = await res.json();
+  try{
+    const res = await fetch("https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,solana&vs_currencies=usd");
+    const data = await res.json();
 
-  btc.innerText = data.bitcoin.usd;
-  eth.innerText = data.ethereum.usd;
-  sol.innerText = data.solana.usd;
+    document.getElementById("btc").innerText = data.bitcoin.usd;
+    document.getElementById("eth").innerText = data.ethereum.usd;
+    document.getElementById("sol").innerText = data.solana.usd;
+  }catch(e){}
 }
+
 loadPrices();
 setInterval(loadPrices,10000);
 
-// 📰 NEWS + INVESTORS
+// 📰 NEWS (WORKING)
 async function loadNews(){
   try{
     const res = await fetch("https://min-api.cryptocompare.com/data/v2/news/?lang=EN");
@@ -140,30 +171,17 @@ async function loadNews(){
     let html = "";
 
     data.Data.slice(0,5).forEach(n=>{
-      html += `<div class="news">${n.title}</div>`;
+      html += `
+        <div class="news">
+          <b>${n.title}</b>
+        </div>
+      `;
     });
 
-    html += `<h3>Top Investors 💰</h3>
-
-    <div class="investor">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/5/59/Satoshi_Nakamoto.jpg">
-      <small>Satoshi</small>
-    </div>
-
-    <div class="investor">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/6/6f/Vitalik_Buterin_Ethereum.jpg">
-      <small>Vitalik</small>
-    </div>
-
-    <div class="investor">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/4/46/Michael_Saylor.jpg">
-      <small>Saylor</small>
-    </div>`;
-
-    document.getElementById("newsContainer").innerHTML = html;
+    document.getElementById("news").innerHTML = html;
 
   }catch(e){
-    newsContainer.innerHTML = "Failed to load news";
+    document.getElementById("news").innerHTML = "News failed to load";
   }
 }
 
