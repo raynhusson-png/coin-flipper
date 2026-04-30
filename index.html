@@ -2,209 +2,52 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Investment Dashboard Pro</title>
-
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
-
-<style>
-body{margin:0;font-family:Arial;background:#0b1220;color:white}
-header{background:#111827;padding:15px;text-align:center;font-weight:bold}
-.container{max-width:1000px;margin:auto;padding:20px}
-.card{background:#111827;padding:15px;margin:15px 0;border-radius:10px}
-input{width:100%;padding:10px;margin-top:8px;border:none;border-radius:6px}
-button{padding:10px;margin-top:10px;background:#fbbf24;border:none;border-radius:6px;cursor:pointer}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:15px}
-.price{color:#22c55e;font-size:20px}
-img{width:100%;border-radius:8px}
-</style>
+<title>Step 1 - Working Test</title>
 </head>
 
-<body>
+<body style="background:#0b1220;color:white;font-family:Arial">
 
-<header>Investment Dashboard 📊</header>
+<h1>✅ Step 1: Website is Working</h1>
 
-<div class="container">
+<h2>Bitcoin Price</h2>
+<p>$<span id="btc">loading...</span></p>
 
-<!-- LOGIN -->
-<div class="card" id="authBox">
-<h2>Login / Signup</h2>
-<input id="email" placeholder="Email">
-<input id="password" type="password" placeholder="Password">
-<button onclick="login()">Enter Dashboard</button>
-</div>
-
-<!-- APP -->
-<div id="app" style="display:none;">
-
-<div class="grid">
-
-<div class="card">
-<h3>Balance</h3>
-<p>$<span id="bal">0</span></p>
-</div>
-
-<div class="card">
-<h3>Profit</h3>
-<p>$<span id="prof">0</span></p>
-</div>
-
-<div class="card">
-<h3>BTC Price</h3>
-<p class="price">$<span id="btc">...</span></p>
-</div>
-
-<div class="card">
-<h3>Deposit</h3>
-<input id="dep" placeholder="Amount">
-<button onclick="deposit()">Add Funds</button>
-</div>
-
-<div class="card">
-<h3>Withdraw</h3>
-<button onclick="withdraw()">Request Withdrawal</button>
-</div>
-
-</div>
-
-<!-- CHART -->
-<div class="card">
-<h3>BTC Chart</h3>
-<iframe src="https://www.tradingview.com/widgetembed/?symbol=BINANCE:BTCUSDT&theme=dark"
-width="100%" height="300"></iframe>
-</div>
-
-<!-- NEWS -->
-<div class="card">
-<h3>Crypto News</h3>
-<div id="news">Loading...</div>
-</div>
-
-<button onclick="logout()">Logout</button>
-
-</div>
+<h2>Crypto News</h2>
+<div id="news">loading...</div>
 
 <script>
 
-// FIREBASE CONFIG (ADD YOURS)
-const firebaseConfig = {
-  apiKey: "YOUR_KEY",
-  authDomain: "YOUR_DOMAIN",
-  projectId: "YOUR_ID"
-};
-
-firebase.initializeApp(firebaseConfig);
-const auth = firebase.auth();
-const db = firebase.firestore();
-
-let uid = null;
-
-/* LOGIN */
-function login(){
-  auth.signInWithEmailAndPassword(email.value,password.value)
-  .catch(()=>{
-    auth.createUserWithEmailAndPassword(email.value,password.value)
-    .then(u=>{
-      db.collection("users").doc(u.user.uid).set({
-        balance:100,
-        profit:0
-      });
-    });
-  });
-}
-
-/* AUTH STATE */
-auth.onAuthStateChanged(user=>{
-  if(user){
-    uid = user.uid;
-
-    authBox.style.display="none";
-    app.style.display="block";
-
-    const ref = db.collection("users").doc(uid);
-
-    ref.onSnapshot(doc=>{
-      bal.innerText = doc.data().balance.toFixed(2);
-      prof.innerText = doc.data().profit.toFixed(2);
-    });
-
-    startProfit(uid);
+// PRICE TEST
+async function loadPrice(){
+  try{
+    const r = await fetch("https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd");
+    const d = await r.json();
+    document.getElementById("btc").innerText = d.bitcoin.usd;
+  }catch(e){
+    document.getElementById("btc").innerText = "error";
   }
-});
+}
+loadPrice();
 
-/* PROFIT ENGINE (DEMO ONLY) */
-function startProfit(uid){
-  setInterval(async ()=>{
-    const ref = db.collection("users").doc(uid);
-    const doc = await ref.get();
+// NEWS TEST
+async function loadNews(){
+  try{
+    const r = await fetch("https://min-api.cryptocompare.com/data/v2/news/?lang=EN");
+    const d = await r.json();
 
-    let d = doc.data();
-    let gain = d.balance * 0.0015;
-
-    ref.update({
-      balance: d.balance + gain,
-      profit: d.profit + gain
+    let html = "";
+    d.Data.slice(0,5).forEach(n=>{
+      html += "<p>📰 " + n.title + "</p>";
     });
 
-  },5000);
+    document.getElementById("news").innerHTML = html;
+
+  }catch(e){
+    document.getElementById("news").innerHTML = "news failed";
+  }
 }
 
-/* DEPOSIT */
-function deposit(){
-  const amount = parseFloat(dep.value);
-  const ref = db.collection("users").doc(uid);
-
-  ref.get().then(doc=>{
-    ref.update({
-      balance: doc.data().balance + amount
-    });
-  });
-}
-
-/* WITHDRAW */
-function withdraw(){
-  db.collection("withdrawals").add({
-    uid:uid,
-    status:"pending"
-  });
-
-  alert("Request sent");
-}
-
-/* LOGOUT */
-function logout(){
-  auth.signOut();
-  location.reload();
-}
-
-/* PRICE */
-async function price(){
-  const r = await fetch("https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd");
-  const d = await r.json();
-  btc.innerText = d.bitcoin.usd;
-}
-price();
-
-/* NEWS */
-async function news(){
-  const r = await fetch("https://min-api.cryptocompare.com/data/v2/news/?lang=EN");
-  const d = await r.json();
-
-  let html = "";
-
-  d.Data.slice(0,5).forEach(n=>{
-    html += `
-      <div style="background:#1f2937;margin:10px 0;padding:10px;border-radius:8px">
-        <img src="${n.imageurl || 'https://via.placeholder.com/400x200'}">
-        <p>${n.title}</p>
-      </div>
-    `;
-  });
-
-  news.innerHTML = html;
-}
-news();
+loadNews();
 
 </script>
 
